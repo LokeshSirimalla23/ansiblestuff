@@ -1,0 +1,5 @@
+---
+  -  instance_id: "i-00fed9bff47cb3455"
+     wait: yes
+     name: nginx_img
+ 

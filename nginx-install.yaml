@@ -1,0 +1,20 @@
+---
+ - hosts: ansible_clients
+   become: yes
+   tasks:
+   - name: install nginx
+     apt:
+       name: nginx
+       state: present
+   - name: start nginx
+     service:
+        name: nginx
+        state: started
+   - name: change nginx display
+     template:
+       src: index.html
+       dest: /var/www/html/index.html
+   - name: restart nginx
+     service:
+        name: nginx
+        state: restarted

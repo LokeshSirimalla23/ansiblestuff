@@ -1,0 +1,12 @@
+---
+ - hosts: localhost
+   become: yes
+   tasks:
+   - name: Create_AMI
+     ec2_ami:
+       region: us-east-1
+       instance_id: i-00fed9bff47cb3455
+       name: ansible-sg
+       wait: yes
+       wait_timeout: 1200
+       state: present

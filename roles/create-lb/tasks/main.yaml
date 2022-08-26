@@ -1,0 +1,38 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+  - name: Create a target group with instance targets  
+    elb_target_group:    
+      name: mytargetgroup   
+      protocol: http    
+      port: 80    
+      vpc_id: vpc-0457a1fee92230bf8    
+      health_check_protocol: http    
+      health_check_path: /    
+      successful_response_codes: "200,250-260"    
+      targets:      
+      - Id: i-0d83e5999efacdd8c         
+        Port: 80    
+      state: present
+      wait_timeout: 200
+      wait: True
+  - name: load_balancer
+    elb_application_lb:
+      name: myalb
+      security_groups:
+       - sg-0d23bf53ce3860b24
+      subnets:
+        - subnet-0d11a12446469c025
+        - subnet-0faca1de2e3e680cc
+        - subnet-00c97c9077dedf754
+      listeners:
+        - Protocol: HTTP
+          Port: 80
+        #  SslPolicy: ELBSecurityPolicy-2015-05
+        #  Certificates: # The ARN of the certificate (only one certficate ARN should be provided)
+        #    - CertificateArn: arn:aws:iam::12345678987:server-certificate/test.domain.com
+          DefaultActions:
+            - Type: forward 
+              TargetGroupName: mytargetgroup
+      state: present 

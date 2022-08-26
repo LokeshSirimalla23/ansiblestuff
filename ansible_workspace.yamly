@@ -1,0 +1,17 @@
+---
+  - hosts: localhost
+    tasks:
+    - name: create aws instance
+      ec2:
+          key_name: edvenswa
+          instance_type: t2.micro
+          image: ami-08d4ac5b634553e16
+          wait: yes
+          group: default
+          volumes:
+             - device_name: /dev/sda1
+               device_type: gp2
+               volume_size: 4
+               delete_on_termination: true
+          count: 1
+          region: us-east-1

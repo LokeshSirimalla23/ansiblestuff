@@ -1,0 +1,10 @@
+---
+ - hosts: localhost
+   become: yes
+   tasks:
+   - name: Basic AMI Creation
+     amazon.aws.ec2_ami:
+       instance_id: i-00fed9bff47cb3455
+       region: us-east-1
+       wait: yes
+       name: nginx-ami

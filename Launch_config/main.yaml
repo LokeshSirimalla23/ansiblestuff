@@ -1,0 +1,54 @@
+---
+#  - community.aws.ec2_asg:
+#     name: ELB
+#     load_balancers: [ 'lb1', 'lb2' ]
+#     availability_zones: [ 'eu-west-1a', 'eu-west-1b' ]
+#     launch_config_name: 'my_new_lc'
+#     min_size: 1
+#     max_size: 1
+#     desired_capacity: 1
+#     vpc_zone_identifier: [ 'subnet-abcd1234', 'subnet-1a2b3c4d' ]
+#     tags:
+#       - environment: production
+#         propagate_at_launch: no
+
+---
+# group_vars/all.yml
+ 
+region: us-east-1
+zone: us-east-1a # zone that the master AMI will be configured in
+keypair: edvenswa
+security_groups: ['default']
+instance_type: t2.micro
+instance_id: "i-00fed9bff47cb3455"
+ami_image: ami-08d8fc6eaf08921ac
+# specify group_name on the command line with -e group_name=devX
+group_name: test
+instances_min: 1 # minimum number of instances in the auto scaling group
+instances_max: 1 # maximum number of instances in the auto scaling group
+iam_profile: "noaccess"
+volumes:
+  - device_name: /dev/sda1
+    device_type: gp2
+    volume_size: 8 # size of the root disk
+    delete_on_termination: true
+
+  - name: create launch config
+    community.aws.ec2_lc:
+     name: my_new_lc
+     image_id: "{{ ami_image }}"
+     key_name: "{{ keypair: }}"
+     region: "{{ region }}"
+     security_groups: "{{ security_groups }}"
+     instance_type: "{{ instance_type }}"
+     assign_public_ip: yes
+  - community.aws.ec2_asg:
+     name: myasg
+     launch_config_name: my_new_lc
+     health_check_period: 60
+     health_check_type: ELB
+     replace_all_instances: yes
+     min_size: 1
+     max_size: 1
+     desired_capacity: 1
+     region: "{{ region }}"
